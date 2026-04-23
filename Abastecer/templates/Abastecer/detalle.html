@@ -1,0 +1,192 @@
+{% extends 'Base/base.html' %}
+
+
+
+{% block content %}
+
+<div class="container mt-5">
+    <div class="card p-4">
+        <h3 class="mb-4 text-center">Ingresar Abastecimiento de Productos</h3>
+        <div class="row">
+            <div class="col-md-4">
+                <label for="">Abastecimento</label>
+                <span style="font-size:40px;">{{a.id}}</label>
+            </div>
+            <div class="col-md-4">
+                <label for="">Factura</label>
+                <span style="font-size:40px;">{{a.factura}}</label>
+            </div>
+            <div class="col-md-4">
+                <label for="">Proveedor</label>
+                <span style="font-size:40px;">{{a.proveedor}}</label>
+            </div>
+        </div><br>
+        <div class="row">
+            <div class="col-md-3">
+                <label for="">Total de Factura</label>
+                <span style="font-size:40px;">Q.{{a.total}}</label>
+            </div>
+            <div class="col-md-3">
+                <label for="">Total de Ingresado</label>
+                <span style="font-size:40px;">Q.{{van}}</label>
+            </div>
+            <div class="col-md-3">
+            <label for="">¿Está Cuadrado?</label>
+            {% if vv %}
+                <h3 style="color:green; font-size:30px;">Cuadrado</h3>
+            {% else %}
+                <h3 style="color:red; font-size:30px;">No Cuadrado</h3>
+            {% endif %}
+            </div>
+
+        </div>
+
+        <div class="row">
+        <div class="col-md-3"><br>
+        <form action="#" method="POST" enctype="multipart/form-data">{% csrf_token %}
+            <button class="btn btn-sm btn-danger me-1" name="terminar">Terminar</button>
+        </form>
+        </div>
+    </div>
+        
+    </div><br>
+
+    
+
+    <div class="container">
+         
+        <div class="table-responsive">
+
+            <form action="#" method="POST" enctype="multipart/form-data">{% csrf_token %}
+                
+                <input type="text" class="form-control" name="buscar" autofocus="buscar" placeholder="Buscar Producto">
+
+            </form>
+            {% if tok %}
+            <br>
+            <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
+                <table class="table table-striped table-hover align-middle shadow-sm rounded">
+            <thead class="table-dark sticky-top">
+                <tr>
+                    <th>Código</th>
+                    <th>Nombre</th>
+                    <th>Categoría</th>
+                    <th>Stock</th>
+                    <th>Nuevo Ingreso</th>
+                    <th>Precio Compra Antes</th>
+                    <th>Nuevo Precio Compra</th>
+                    <th>Precio Venta Antes</th>
+                    <th>Nuevo Precio Venta</th>
+                    <th class="text-center">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for producto in b %}
+                <tr>
+                    <td>{{ producto.codigo }}</td>
+                    <td>{{ producto.nombre }}</td>
+                    <td>{{ producto.categoria }}</td>
+                    <td>
+                        {% if producto.stock_actual > 0 %}
+                            <span class="badge bg-success">{{ producto.stock_actual }}</span>
+                        {% else %}
+                            <span class="badge bg-danger">0</span>
+                        {% endif %}
+                    </td>
+                    <form action="#" method="POST" enctype="multipart/form-data">{% csrf_token %}
+                    <input type="hidden" name="id_prod" value="{{ producto.id }}"> 
+                    <td>{{form.ingreso_ahora}}</td>
+                    <td>Q.{{ producto.compra }}</td>
+                    <td>{{form.compra_ahora}}</td>
+                    <td>Q.{{ producto.venta }}</td>
+                    <td>{{form.venta_ahora}}</td>
+                    <td class="text-center">
+                        <!-- Íconos de acción -->
+                        <button class="btn btn-sm btn-success me-1" title="Agregar" type="submit" name="agregar">
+                            <i class="bi bi-plus"></i>
+                        </button>
+                    </td>
+                    </form>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+
+        </div>
+        
+    </div><br>
+
+   {% else %}
+    <caption>SIN RESULTADOS</caption>
+
+
+   {% endif %}
+
+   <br>
+     <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
+        <table class="table table-striped table-hover align-middle shadow-sm rounded">
+            <thead class="table-dark sticky-top">
+                <tr>
+                    <th>Código</th>
+                    <th>Nombre</th>
+                    <th>Categoría</th>
+                    <th>Ingreso</th>
+                    <th>Stock</th>
+                    <th>Precio Compra</th>
+                    <th>Precio Venta</th>
+                    <th class="text-center">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for producto in d %}
+                <tr>
+                    <td>{{ producto.prod.codigo }}</td>
+                    <td>{{ producto.prod.nombre }}</td>
+                    <td>{{ producto.prod.categoria }}</td>
+                    <td>{{ producto.ingreso_ahora }}</td>
+                    <td>
+                        {% if producto.prod.stock_actual > 0 %}
+                            <span class="badge bg-success">{{ producto.prod.stock_actual }}</span>
+                        {% else %}
+                            <span class="badge bg-danger">0</span>
+                        {% endif %}
+                    </td>
+                    <td>Q. {{ producto.compra_ahora }}</td>
+                    <td>Q. {{ producto.venta_ahora }}</td>
+                    <td class="text-center">
+                        <form action="#" method="POST" enctype="multipart/form-data">{% csrf_token %}
+                        <input type="hidden" name="id_detalle" value="{{ producto.id }}">
+                        <button class="btn btn-sm btn-danger me-1" title="quitar" name="quitar">
+                            <i class="bi bi-x-square-fill"></i>
+                        </button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+{% if messages %}
+{% for message in messages %}
+<script>
+Swal.fire({
+  position: "top-end",
+  icon: '{{message.tags}}',
+  title: '{{message}}',
+  showConfirmButton: false,
+  timer: 1000
+});
+</script>
+{% endfor %}
+{% endif %}
+
+
+
+
+
+{% endblock %}

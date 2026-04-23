@@ -1,0 +1,40 @@
+{% extends 'Base/base.html' %}
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4 text-center">📊 Estadísticas de Ventas del Día</h2>
+
+    <div class="row text-center">
+        <!-- Ganancia Global -->
+        <div class="col-md-4 mb-3">
+            <div class="card shadow-sm border-success">
+                <div class="card-body">
+                    <h5 class="card-title">Ganancia Global</h5>
+                    <p class="card-text fs-4 text-success">Q. {{ ganancias_global|floatformat:2 }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ventas FEL -->
+        <div class="col-md-4 mb-3">
+            <div class="card shadow-sm border-primary">
+                <div class="card-body">
+                    <h5 class="card-title">Ventas FEL</h5>
+                    <p class="card-text fs-5 text-primary">Cantidad: {{ fel_count }}</p>
+                    <p class="card-text fs-5 text-success">Total: Q. {{ fel_total|floatformat:2 }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ventas Proforma -->
+        <div class="col-md-4 mb-3">
+            <div class="card shadow-sm border-warning">
+                <div class="card-body">
+                    <h5 class="card-title">Ventas Proforma</h5>
+                    <p class="card-text fs-5 text-warning">Cantidad: {{ proforma_count }}</p>
+                    <p class="card-text fs-5 text-success">Total: Q. {{ proforma_total|floatformat:2 }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

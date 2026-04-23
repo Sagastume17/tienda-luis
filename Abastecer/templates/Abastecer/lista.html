@@ -1,0 +1,138 @@
+{% extends 'Base/base.html' %}
+
+{% block content %}
+
+<div class="container-fluid mt-4">
+  <h2>Listado de Abastecimientos</h2>
+
+  <!-- Scroll horizontal en móviles -->
+  <div class="table-responsive">
+
+    <input class="form-control col-md-3 light-table-filter" data-table="order-table" type="text"
+            placeholder="Buscar.." style="border: 1px solid black;" name="buscar" autofocus="buscar"><br>
+
+    <table class="table table-striped align-middle order-table">
+      <thead class="table-light">
+        <tr>
+          <th>Abastecimiento</th>
+          <th>Factura</th>
+          <th>Proveedor</th>
+          <th>Producto</th>
+          <th>Ingreso</th>
+          <th>Compra</th>
+          <th>Venta</th>
+          <th>Fecha</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for detalle in page_obj %}
+          <tr>
+            <td>{{ detalle.id }}</td>
+            <td>{{ detalle.abastecedor.factura }}</td>
+            <td>{{ detalle.abastecedor.proveedor }}</td>
+            <td>{{ detalle.prod.nombre }}</td>
+            <td>{{ detalle.ingreso_ahora }}</td>
+            <td>{{ detalle.compra_ahora }}</td>
+            <td>{{ detalle.venta_ahora }}</td>
+            <td>{{ detalle.fecha|date:"d-m-Y" }}</td>
+            <td>
+              <a href="{% url 'HistorialAbas' detalle.prod.id %}" class="btn btn-info btn-sm">
+                <i class="fas fa-history"></i> Historial
+              </a>
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="9" class="text-center">No hay registros</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Paginación centrada y adaptable -->
+  <div class="d-flex justify-content-center mt-3">
+    <nav aria-label="Page navigation">
+      <ul class="pagination pagination-sm flex-wrap">
+        {% if page_obj.has_previous %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Anterior</a>
+          </li>
+        {% endif %}
+
+        <li class="page-item active">
+          <span class="page-link">{{ page_obj.number }}</span>
+        </li>
+
+        {% if page_obj.has_next %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.next_page_number }}">Siguiente</a>
+          </li>
+        {% endif %}
+      </ul>
+    </nav>
+  </div>
+</div>
+
+
+<!-- Font Awesome -->
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
+<script type="text/javascript">
+  (function (document) {
+      'use strict';
+
+      var LightTableFilter = (function (Arr) {
+
+          var _input;
+
+          function _onInputEvent(e) {
+              _input = e.target;
+              var tables = document.getElementsByClassName(_input.getAttribute('data-table'));
+              Arr.forEach.call(tables, function (table) {
+                  Arr.forEach.call(table.tBodies, function (tbody) {
+                      Arr.forEach.call(tbody.rows, _filter);
+                  });
+              });
+          }
+
+          function _filter(row) {
+              var text = row.textContent.toLowerCase(), val = _input.value.toLowerCase();
+              row.style.display = text.indexOf(val) === -1 ? 'none' : 'table-row';
+          }
+
+          return {
+              init: function () {
+                  var inputs = document.getElementsByClassName('light-table-filter');
+                  Arr.forEach.call(inputs, function (input) {
+                      input.oninput = _onInputEvent;
+                  });
+              }
+          };
+      })(Array.prototype);
+
+      document.addEventListener('readystatechange', function () {
+          if (document.readyState === 'complete') {
+              LightTableFilter.init();
+          }
+      });
+
+  })(document);
+</script>
+
+
+{% if messages %}
+{% for message in messages %}
+<script>
+Swal.fire({
+  position: "top-end",
+  icon: '{{message.tags}}',
+  title: '{{message}}',
+  showConfirmButton: false,
+  timer: 1000
+});
+</script>
+{% endfor %}
+{% endif %}
+{% endblock %}

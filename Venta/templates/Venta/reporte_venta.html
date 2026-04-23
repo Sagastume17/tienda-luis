@@ -1,0 +1,21 @@
+{% extends 'Base/base.html' %}
+
+{% block content %}
+
+<form method="get" class="mb-3">
+    <label>Fecha inicio:</label>
+    <input type="date" name="fecha_inicio" value="{{ fecha_inicio }}">
+    <label>Fecha fin:</label>
+    <input type="date" name="fecha_fin" value="{{ fecha_fin }}">
+    <button type="submit" class="btn btn-primary">Filtrar</button>
+</form>
+
+<div class="mt-3">
+    <h5>Total vendido FEL: Q. {{ total_fel }}</h5>
+    <h5>Total global de ventas: Q. {{ total_global }}</h5>
+</div>
+
+
+
+
+{% endblock %}

@@ -1,0 +1,121 @@
+{% extends 'Base/base.html' %}
+
+
+
+{% block content %}
+
+{% if messages %}
+{% for message in messages %}
+<script>
+Swal.fire({
+  position: "top-end",
+  icon: '{{message.tags}}',
+  title: '{{message}}',
+  showConfirmButton: false,
+  timer: 1500
+});
+</script>
+{% endfor %}
+{% endif %}
+
+<div class="container mt-4">
+  <h2 class="mb-4">Atajos del sistema</h2>
+  <div class="row g-4">
+    <!-- Fila 1 -->
+    <div class="col-6 col-md-2">
+      <div class="card text-center h-100 shadow-sm">
+        <div class="card-body">
+          <a href="{% url 'NuevoProd' %}"><i class="bi bi-box-seam display-4 text-primary"></i></a>
+          <h6 class="card-title mt-2">Ingresar Producto</h6>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-md-2">
+      <div class="card text-center h-100 shadow-sm">
+        <div class="card-body">
+          <a href="{% url 'ListaProd' %}"><i class="bi bi-basket-fill display-4 text-success"></i></a>
+          <h6 class="card-title mt-2">Lista de Productos</h6>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-md-2">
+      <div class="card text-center h-100 shadow-sm">
+        <div class="card-body">
+          <a href=""><i class="bi bi-x-octagon-fill display-4 text-danger"></i></a>
+          <h6 class="card-title mt-2">Productos Sin Stock</h6>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-md-2">
+      <div class="card text-center h-100 shadow-sm">
+        <div class="card-body">
+          <a href="{% url 'NuevoProv' %}"><i class="bi bi-person-plus-fill display-4 text-info"></i></a>
+          <h6 class="card-title mt-2">Ingresar Proveedor</h6>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-md-2">
+      <div class="card text-center h-100 shadow-sm">
+        <div class="card-body">
+          <a href="{% url 'ListaProv' %}"><i class="bi bi-card-checklist display-4 text-warning"></i></a>
+          <h6 class="card-title mt-2">Lista de Proveedores</h6>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-md-2">
+      <div class="card text-center h-100 shadow-sm">
+        <div class="card-body">
+          <a href="{% url 'NuevoAbas' %}"><i class="bi bi-cart-check-fill display-4 text-secondary"></i></a>
+          <h6 class="card-title mt-2">Ingresar Pedido</h6>
+        </div>
+      </div>
+    </div>
+
+    <!-- Fila 2 -->
+    <div class="col-6 col-md-2">
+      <div class="card text-center h-100 shadow-sm">
+        <div class="card-body">
+          <a href="{% url 'NuevoClie' %}"><i class="bi bi-person-fill-add display-4 text-primary"></i></a>
+          <h6 class="card-title mt-2">Ingresa Cliente</h6>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-md-2">
+      <div class="card text-center h-100 shadow-sm">
+        <div class="card-body">
+          <a href="{% url 'ListaCli' %}"><i class="bi bi-people-fill display-4 text-success"></i></a>
+          <h6 class="card-title mt-2">Lista de Clientes</h6>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-md-2">
+      <div class="card text-center h-100 shadow-sm">
+        <div class="card-body">
+          <a href="{% url 'NuevaVenta' %}"><i class="bi bi-receipt-cutoff display-4 text-danger"></i></a>
+          <h6 class="card-title mt-2">Nueva Venta</h6>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-md-2">
+      <div class="card text-center h-100 shadow-sm">
+        <div class="card-body">
+          <a href="{% url 'ListaVenta' %}"><i class="bi bi-clipboard-data-fill display-4 text-secondary"></i></a>
+          <h6 class="card-title mt-2">Lista Ventas</h6>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-md-2">
+      <div class="card text-center h-100 shadow-sm">
+        <div class="card-body">
+          <a href="{% url 'estadisticas_ventas' %}"><i class="bi bi-graph-up-arrow display-4 text-info"></i></a>
+          <h6 class="card-title mt-2">Estadísticas Ganancias</h6>
+        </div>
+      </div>
+    </div>
+    
+  </div>
+</div>
+
+
+
+{% endblock %}

@@ -1,0 +1,74 @@
+{% extends 'Base/base.html' %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+  <h2 class="mb-3">Historial de {{ producto.nombre }}</h2>
+
+  <div class="table-responsive">
+    <table class="table table-bordered table-striped align-middle">
+      <thead class="table-light">
+        <tr>
+          <th>Abastecimiento</th>
+          <th>Factura</th>
+          <th>Proveedor</th>
+          <th>Ingreso</th>
+          <th>Compra</th>
+          <th>Venta</th>
+          <th>Usuario</th>
+          <th>Fecha</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for detalle in page_obj %}
+          <tr>
+            <td>{{ detalle.id }}</td>
+            <td>{{ detalle.abastecedor.factura }}</td>
+            <td>{{ detalle.abastecedor.proveedor }}</td>
+            <td>{{ detalle.ingreso_ahora }}</td>
+            <td>{{ detalle.compra_ahora }}</td>
+            <td>{{ detalle.venta_ahora }}</td>
+            <td>{{ detalle.usuario }}</td>
+            <td>{{ detalle.fecha|date:"d-m-Y" }}</td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="8" class="text-center">No hay historial para este producto</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="d-flex justify-content-center mt-3">
+    <nav aria-label="Page navigation">
+      <ul class="pagination pagination-sm flex-wrap">
+        {% if page_obj.has_previous %}
+          <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Anterior</a></li>
+        {% endif %}
+        <li class="page-item active"><span class="page-link">{{ page_obj.number }}</span></li>
+        {% if page_obj.has_next %}
+          <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Siguiente</a></li>
+        {% endif %}
+      </ul>
+    </nav>
+  </div>
+</div>
+
+
+<!-- Font Awesome -->
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
+{% if messages %}
+{% for message in messages %}
+<script>
+Swal.fire({
+  position: "top-end",
+  icon: '{{message.tags}}',
+  title: '{{message}}',
+  showConfirmButton: false,
+  timer: 1000
+});
+</script>
+{% endfor %}
+{% endif %}
+{% endblock %}

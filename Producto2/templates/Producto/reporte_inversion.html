@@ -1,0 +1,69 @@
+{% extends 'Base/base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">📊 Reporte de Inversión en Productos</h2>
+
+    <!-- 🔎 Buscador -->
+    <form method="get" class="mb-3 d-flex">
+        <input type="text" name="q" value="{{ query }}" class="form-control me-2" placeholder="Buscar producto...">
+        <button type="submit" class="btn btn-primary">Buscar</button>
+    </form>
+
+    <!-- 📋 Tabla -->
+    <table class="table table-striped table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>Código</th>
+                <th>Nombre</th>
+                <th>Stock Actual</th>
+                <th>Precio Compra</th>
+                <th>Inversión</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for p in page_obj %}
+            <tr>
+                <td>{{ p.codigo }}</td>
+                <td>{{ p.nombre }}</td>
+                <td>{{ p.stock_actual }}</td>
+                <td>Q {{ p.compra|floatformat:2 }}</td>
+                <td>Q {{ p.inversion_total|floatformat:2 }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" class="text-center">No se encontraron productos</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- 📄 Paginador -->
+    <nav>
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?q={{ query }}&page={{ page_obj.previous_page_number }}">Anterior</a>
+            </li>
+            {% endif %}
+
+            <li class="page-item active">
+                <span class="page-link">
+                    Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+                </span>
+            </li>
+
+            {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?q={{ query }}&page={{ page_obj.next_page_number }}">Siguiente</a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+
+    <!-- 💰 Total invertido -->
+    <div class="alert alert-info mt-3">
+        <strong>Total Invertido:</strong> Q {{ inversion_global|floatformat:2 }}
+    </div>
+</div>
+{% endblock %}

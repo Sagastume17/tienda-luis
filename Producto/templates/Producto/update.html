@@ -1,0 +1,53 @@
+{% extends 'Base/base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow-sm">
+        <div class="card-header bg-success text-white text-center">
+            <h4>MODIFICAR PRODUCTO</h4>
+        </div>
+        <div class="card-body">
+            <form action="#" method="POST" novalidate enctype="multipart/form-data">
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger">
+                        {{ form.non_field_errors }}
+                    </div>
+                {% endif %}
+
+                <div class="row">
+                    <div class="col-md-3 mb-3">{{ form.codigo.label_tag }} {{ form.codigo }}</div>
+                    <div class="col-md-6 mb-3">{{ form.nombre.label_tag }} {{ form.nombre }}</div>
+                    <div class="col-md-3 mb-3">{{ form.categoria.label_tag }} {{ form.categoria }}</div>
+                    <div class="col-md-3 mb-3">{{ form.compra.label_tag }} {{ form.compra }}</div>
+                    <div class="col-md-3 mb-3">{{ form.venta.label_tag }} {{ form.venta }}</div>
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label">Stock Actual</label>
+                        <input type="text" class="form-control" value="{{ producto.stock_actual }}" readonly>
+                    </div>
+                    <div class="col-md-3 mb-3">{{ form.estado.label_tag }} {{ form.estado }}</div>
+                    <div class="col-md-3 mb-3">{{ form.nuevo_compra.label_tag }} {{ form.nuevo_compra }}</div>
+                    <div class="col-md-3 mb-3">{{ form.nuevo_venta.label_tag }} {{ form.nuevo_venta }}</div>
+                    
+
+                    <!-- Stock actual (solo lectura) -->
+                    
+
+                    <!-- Campos adicionales -->
+                    <div class="col-md-3 mb-3">{{ form.nuevo_ing.label_tag }} {{ form.nuevo_ing }}</div>
+                    
+                    <div class="col-md-3 mb-3">{{ form.usuario.label_tag }} {{ form.usuario }}</div>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col text-center">
+                        <button type="submit" class="btn btn-success px-4">Actualizar</button>
+                        <a href="{% url 'ListaProd' %}" class="btn btn-link text-danger">Cancelar</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

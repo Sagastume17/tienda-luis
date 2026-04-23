@@ -1,0 +1,243 @@
+/* =========================
+   FONDO GENERAL
+========================= */
+body {
+    background-color: #2d4465;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+
+/* =========================
+   TARJETAS
+========================= */
+.card {
+    border-radius: 10px;
+}
+
+
+/* =========================
+   SIDEBAR / LAYOUT
+========================= */
+.sidebar {
+    width: 250px;
+    flex-shrink: 0;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    overflow-y: auto;
+}
+
+.content {
+    margin-left: 250px;
+    flex-grow: 1;
+    padding: 20px;
+}
+
+
+/* =========================
+   ACCESOS RÁPIDOS
+========================= */
+.shortcut-card {
+    border-radius: 10px;
+    transition: transform 0.2s ease;
+}
+
+.shortcut-card:hover {
+    transform: scale(1.03);
+}
+
+.shortcut-icon {
+    font-size: 2.5rem;
+}
+
+
+/* =========================
+   FORMULARIOS (EFECTO GLASS)
+========================= */
+.form-card {
+    width: 420px;
+    padding: 30px;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
+.form-card h3 {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.form-control {
+    border-radius: 8px;
+}
+
+
+/* =========================
+   BOTONES
+========================= */
+.btn-primary {
+    border-radius: 50px;
+    padding: 10px 28px;
+    font-weight: 500;
+    background: linear-gradient(135deg, #007bff, #0056b3);
+    border: none;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #0056b3, #004080);
+}
+
+
+/* =========================
+   DROPDOWNS COLORES
+========================= */
+.dropdown-reportes { background-color: #0d6efd !important; }
+.dropdown-usuarios { background-color: #6f42c1 !important; }
+.dropdown-ventas { background-color: #198754 !important; }
+.dropdown-productos { background-color: #fd7e14 !important; }
+.dropdown-abastecer { background-color: #343a40 !important; }
+.dropdown-clientes { background-color: #20c997 !important; }
+.dropdown-proveedores { background-color: #6f4e37 !important; }
+
+/* Items blancos */
+.dropdown-menu .dropdown-item {
+    color: #ffffff !important;
+}
+
+.dropdown-menu .dropdown-item:hover {
+    background-color: rgba(0,0,0,0.25) !important;
+}
+
+/* Quitar estilo Bootstrap que estorba */
+.dropdown-menu {
+    border: none !important;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.25) !important;
+}
+
+
+/* =========================
+   ICONOS CON RECUADRO
+========================= */
+.nav-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    margin-right: 6px;
+    background: rgba(0,0,0,0.08);
+    font-size: 15px;
+}
+
+
+/* =========================
+   COLORES DE ICONOS
+========================= */
+.icon-reportes { color:#0d6efd; }
+.icon-usuarios { color:#6f42c1; }
+.icon-ventas { color:#198754; }
+.icon-productos { color:#fd7e14; }
+.icon-abastecer { color:#343a40; }
+.icon-clientes { color:#20c997; }
+.icon-proveedores { color:#6f4e37; }
+
+
+/* =========================
+   RECUADROS PARA TODOS LOS MENÚS
+========================= */
+
+/* Estilos base para todos los enlaces del menú */
+.navbar-nav .nav-item .nav-link {
+    border: 2px solid #dee2e6 !important;
+    border-radius: 8px !important;
+    margin: 0 4px !important;
+    padding: 8px 12px !important;
+    transition: all 0.3s ease !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    background-color: white !important;
+}
+
+/* Iconos dentro del menú */
+.navbar-nav .icon-box {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 24px !important;
+    height: 24px !important;
+    border-radius: 4px !important;
+    background: rgba(0, 0, 0, 0.05) !important;
+}
+
+/* Colores de texto específicos */
+.menu-reportes .nav-link { color: #0d6efd !important; }
+.menu-usuarios .nav-link { color: #6f42c1 !important; }
+.menu-productos .nav-link { color: #fd7e14 !important; }
+.menu-proveedores .nav-link { color: #6f4e37 !important; }
+
+/* Efectos hover con colores específicos */
+.menu-reportes .nav-link:hover {
+    background-color: #0d6efd !important;
+    border-color: #0d6efd !important;
+    color: white !important;
+}
+
+.menu-usuarios .nav-link:hover {
+    background-color: #6f42c1 !important;
+    border-color: #6f42c1 !important;
+    color: white !important;
+}
+
+.menu-productos .nav-link:hover {
+    background-color: #fd7e14 !important;
+    border-color: #fd7e14 !important;
+    color: white !important;
+}
+
+.menu-proveedores .nav-link:hover {
+    background-color: #6f4e37 !important;
+    border-color: #6f4e37 !important;
+    color: white !important;
+}
+
+/* Estilo especial para Cerrar Sesión */
+.nav-item:last-child .nav-link {
+    border-color: #dc3545 !important;
+    color: #dc3545 !important;
+    font-weight: 500;
+}
+
+.nav-item:last-child .nav-link:hover {
+    background-color: #dc3545 !important;
+    color: white !important;
+}
+
+/* Flecha de dropdown */
+.navbar-nav .nav-link.dropdown-toggle::after {
+    margin-left: 4px;
+}
+
+/* Espaciado entre elementos */
+.navbar-nav .nav-item {
+    margin: 0 2px;
+}
+
+/* Responsive */
+@media (max-width: 991.98px) {
+    .navbar-nav .nav-link {
+        margin: 4px 0 !important;
+        justify-content: flex-start !important;
+    }
+    
+    .navbar-nav {
+        padding: 10px 0;
+    }
+}

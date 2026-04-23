@@ -1,0 +1,1 @@
+from tienda.wsgi import application

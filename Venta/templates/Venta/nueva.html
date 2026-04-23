@@ -1,0 +1,120 @@
+{% extends 'Base/base.html' %}
+
+{% block content %}
+
+<div class="container mt-5">
+    <div class="card p-4">
+        <h3 class="mb-4 text-center">Nueva Venta</h3>
+
+        <form method="post" enctype="multipart/form-data" novalidate>
+            {% csrf_token %}
+
+            <!-- ERRORES GENERALES -->
+            {% if form.non_field_errors %}
+                <div class="alert alert-danger">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+
+            <!-- NIT -->
+            <div class="mb-3">
+                {{ form.nit.label_tag }}
+                {{ form.nit }}
+                {% if form.nit.errors %}
+                    <div class="text-danger small">{{ form.nit.errors }}</div>
+                {% endif %}
+            </div>
+
+            <!-- TIPO -->
+            <div class="mb-3">
+                {{ form.tipo.label_tag }}
+                {{ form.tipo }}
+                {% if form.tipo.errors %}
+                    <div class="text-danger small">{{ form.tipo.errors }}</div>
+                {% endif %}
+            </div>
+
+            <!-- LUGAR -->
+            <div class="mb-3">
+                {{ form.lugar.label_tag }}
+                {{ form.lugar }}
+                {% if form.lugar.errors %}
+                    <div class="text-danger small">{{ form.lugar.errors }}</div>
+                {% endif %}
+            </div>
+
+            <!-- 🔥 FECHA SOLO PARA PROFORMA -->
+            <div class="mb-3" id="campo_fecha" style="display:none;">
+                {{ form.fecha.label_tag }}
+                {{ form.fecha }}
+                {% if form.fecha.errors %}
+                    <div class="text-danger small">{{ form.fecha.errors }}</div>
+                {% endif %}
+            </div>
+
+            <!-- BOTÓN -->
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary">Guardar</button>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+<!-- 🔥 SCRIPT PARA MOSTRAR FECHA SOLO SI ES PROFORMA -->
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const tipo = document.getElementById("id_tipo");
+    const fecha = document.getElementById("campo_fecha");
+
+    function toggleFecha() {
+        if (tipo.value.toLowerCase().includes("proforma")) {
+            fecha.style.display = "block";
+        } else {
+            fecha.style.display = "none";
+        }
+    }
+
+    toggleFecha();
+    tipo.addEventListener("change", toggleFecha);
+});
+</script>
+
+<!-- MENSAJES -->
+{% if messages %}
+    {% for message in messages %}
+
+        {% if message.tags == 'success' %}
+        <script>
+        Swal.fire({
+            icon: "{{message.tags}}",
+            title: "Venta Finalizada!",
+            html: "<a href='{{message}}' class='btn btn-danger' target='_blank'>FEL</a>",
+            footer: '<a href="#">Gracias por su compra</a>'
+        });
+        </script>
+
+        {% elif message.tags == 'warning' %}
+        <script>
+        Swal.fire({
+            icon: "{{message.tags}}",
+            title: "Venta Descartada!",
+            footer: '<a href="#">Gracias por su compra</a>'
+        });
+        </script>
+
+        {% else %}
+        <script>
+        Swal.fire({
+            icon: "{{message.tags}}",
+            title: "Venta Finalizada!",
+            html: "<a href='{% url 'TicketVenta' message %}' class='btn btn-danger' target='_blank'>Ticket</a>",
+            footer: '<a href="#">Gracias por su compra</a>'
+        });
+        </script>
+        {% endif %}
+
+    {% endfor %}
+{% endif %}
+
+{% endblock %}

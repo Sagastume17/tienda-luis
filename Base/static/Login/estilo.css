@@ -1,0 +1,118 @@
+:root {
+      --grocery-green: #2bb673;
+      --grocery-yellow: #f7c948;
+      --grocery-red: #ff6b6b;
+      --card-max: 420px;
+    }
+
+    /* Fondo temático con frutas y ondas */
+    .bg-grocery {
+      min-height: 100vh;
+      background:
+        radial-gradient(1200px 600px at 100% 0%, rgba(43,182,115,0.12), transparent 60%),
+        radial-gradient(800px 400px at 0% 100%, rgba(247,201,72,0.16), transparent 60%),
+        linear-gradient(135deg, #fff 0%, #f9fff6 60%, #fff 100%);
+    }
+
+    /* Modo oscuro */
+    @media (prefers-color-scheme: dark) {
+      .bg-grocery {
+        background:
+          radial-gradient(1200px 600px at 100% 0%, rgba(43,182,115,0.15), transparent 60%),
+          radial-gradient(800px 400px at 0% 100%, rgba(247,201,72,0.18), transparent 60%),
+          linear-gradient(135deg, #0b1116 0%, #0e151a 60%, #0b1116 100%);
+      }
+    }
+
+    .brand-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: .6rem;
+      background: #ffffff;
+      border: 2px solid #e8f6ee;
+      box-shadow: 0 10px 25px rgba(43,182,115,0.15);
+      border-radius: 999px;
+      padding: .5rem 1rem;
+      font-weight: 700;
+      color: #174b33;
+    }
+    .brand-badge .emoji {
+      font-size: 1.35rem;
+    }
+
+    .login-card {
+      max-width: var(--card-max);
+      border: 0;
+      border-radius: 1.25rem;
+      box-shadow: 0 20px 40px rgba(23,75,51,0.18);
+      overflow: hidden;
+    }
+
+    .login-header {
+      background: linear-gradient(135deg, var(--grocery-green), #1f8e5a);
+      color: #fff;
+      padding: 1.25rem 1.25rem;
+    }
+    .login-header .tag {
+      display: inline-block;
+      background: rgba(255,255,255,0.18);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.3);
+      padding: .25rem .6rem;
+      border-radius: .6rem;
+      font-size: .85rem;
+    }
+
+    .accent-strip {
+      height: 6px;
+      background: linear-gradient(90deg, var(--grocery-yellow), var(--grocery-red));
+    }
+
+    .input-group-text {
+      background: #f5fbf8;
+      border-right: 0;
+    }
+    .form-control {
+      border-left: 0;
+    }
+    .form-control:focus {
+      box-shadow: 0 0 0 .25rem rgba(43,182,115,.22);
+      border-color: var(--grocery-green);
+    }
+
+    .btn-grocery {
+      background: linear-gradient(135deg, var(--grocery-green), #26a167);
+      border: none;
+      color: #fff;
+    }
+    .btn-grocery:hover {
+      background: linear-gradient(135deg, #26a167, #1f8e5a);
+      transform: translateY(-1px);
+    }
+
+    .helper-links a {
+      text-decoration: none;
+    }
+    .helper-links a:hover {
+      text-decoration: underline;
+    }
+
+    /* Chips de beneficios */
+    .benefit-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: .4rem;
+      background: #f0fff7;
+      border: 1px solid #e2f7ec;
+      color: #0f5b3b;
+      padding: .35rem .6rem;
+      border-radius: .75rem;
+      font-size: .85rem;
+      margin-right: .4rem;
+    }
+
+    /* Footer sutil */
+    .mini-footer {
+      font-size: .9rem;
+      color: #5c6b63;
+    }

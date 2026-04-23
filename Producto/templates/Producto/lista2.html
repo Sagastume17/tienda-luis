@@ -1,0 +1,218 @@
+{% extends 'Base/base.html' %}
+
+{% block content %}
+
+<div class="container-fluid mt-4">
+
+    <!-- 🔝 RESUMEN -->
+    <div class="row g-2 mb-3">
+
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 text-center bg-light">
+                <div class="card-body">
+                    <h6 class="text-muted">📦 Inventario (Costo)</h6>
+                    <h4 class="fw-bold text-primary">
+                        Q. {{ stock_invertido|floatformat:2 }}
+                    </h4>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 text-center bg-light">
+                <div class="card-body">
+                    <h6 class="text-muted">📈 Ganancia</h6>
+                    <h4 class="fw-bold text-success">
+                        Q. {{ ganancia|floatformat:2 }}
+                    </h4>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 text-center bg-light">
+                <div class="card-body">
+                    <h6 class="text-muted">💰 Valor en Venta</h6>
+                    <h4 class="fw-bold text-dark">
+                        Q. {{ valor_venta_stock|floatformat:2 }}
+                    </h4>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- 🔝 ENCABEZADO -->
+    <div class="d-flex justify-content-between align-items-center flex-wrap mb-3">
+        <h3>📋 Lista de Productos</h3>
+
+        <a href="{% url 'ListaProd' %}" class="btn btn-warning shadow-sm">
+            🔄 Bodega 1
+        </a>
+    </div>
+
+    <!-- 🔎 FILTROS -->
+    <form method="get" class="mb-3">
+        <div class="row g-2 justify-content-center">
+
+            <div class="col-md-3">
+                <input type="text" name="q" value="{{ query }}" 
+                       class="form-control" placeholder="🔍 Buscar producto...">
+            </div>
+
+            <div class="col-md-2">
+                <input type="date" name="fecha_inicio" value="{{ fecha_inicio }}" class="form-control">
+            </div>
+
+            <div class="col-md-2">
+                <input type="date" name="fecha_fin" value="{{ fecha_fin }}" class="form-control">
+            </div>
+
+            <div class="col-md-2 d-grid">
+                <button type="submit" class="btn btn-primary">Filtrar</button>
+            </div>
+
+            <div class="col-md-3 d-grid">
+                <a href="?q={{ query }}&fecha_inicio={{ fecha_inicio }}&fecha_fin={{ fecha_fin }}&exportar=1"
+                   class="btn btn-success">
+                   📥 Descargar Inventario
+                </a>
+            </div>
+
+        </div>
+    </form>
+
+    <!-- 📋 TABLA -->
+    <div class="table-responsive shadow rounded" style="max-height: 500px; overflow-y: auto;">
+        <table class="table table-hover align-middle mb-0">
+
+            <thead class="table-dark sticky-top text-center">
+                <tr>
+                    <th>#</th>
+                    <th>Código</th>
+                    <th class="text-start">Nombre</th>
+                    <th>Categoría</th>
+                    <th>Ingreso</th>
+                    <th>Salidas</th>
+                    <th>Stock</th>
+                    <th>Compra</th>
+                    <th>Venta</th>
+                    <th>Valor Stock</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for producto in page_obj %}
+                <tr class="text-center">
+
+                    <td>{{ forloop.counter }}</td>
+
+                    <td class="fw-bold text-secondary">
+                        {{ producto.codigo }}
+                    </td>
+
+                    <td class="text-start">
+                        {{ producto.nombre }}
+                    </td>
+
+                    <td>
+                        <span class="badge bg-info text-dark">
+                            {{ producto.categoria }}
+                        </span>
+                    </td>
+
+                    <td>{{ producto.ingreso|default:0 }}</td>
+
+                    <td class="text-danger fw-bold">
+                        {{ producto.salida|default:0 }}
+                    </td>
+
+                    <!-- ✅ STOCK CORRECTO -->
+                    <td>
+                        {% if producto.stock_calc == 0 %}
+                            <span class="badge bg-danger">Agotado</span>
+                        {% elif producto.stock_calc <= 5 %}
+                            <span class="badge bg-warning text-dark">
+                                {{ producto.stock_calc }} ⚠
+                            </span>
+                        {% else %}
+                            <span class="badge bg-success">
+                                {{ producto.stock_calc }}
+                            </span>
+                        {% endif %}
+                    </td>
+
+                    <td>Q. {{ producto.compra|floatformat:2 }}</td>
+
+                    <td class="fw-bold text-success">
+                        Q. {{ producto.venta|floatformat:2 }}
+                    </td>
+
+                    <!-- 💰 VALOR INVENTARIO -->
+                    <td class="fw-bold text-primary">
+                        Q. {{ producto.valor_stock|floatformat:2 }}
+                    </td>
+
+                    <!-- ⚙️ ACCIONES -->
+                    <td>
+                        <a href="{% url 'UpdateProd' producto.id %}" 
+                           class="btn btn-sm btn-warning">
+                            ✏
+                        </a>
+
+                        {% if producto.stock_calc == 0 %}
+                        <a href="{% url 'EliminarProd' producto.id %}" 
+                           class="btn btn-sm btn-danger">
+                            🗑
+                        </a>
+                        {% endif %}
+                    </td>
+
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="11" class="text-center py-3">
+                        ⚠ No se encontraron productos
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+
+        </table>
+    </div>
+
+    <!-- 📄 PAGINACIÓN -->
+    <nav class="mt-3">
+        <ul class="pagination justify-content-center">
+
+            {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link"
+                   href="?q={{ query }}&fecha_inicio={{ fecha_inicio }}&fecha_fin={{ fecha_fin }}&page={{ page_obj.previous_page_number }}">
+                   Anterior
+                </a>
+            </li>
+            {% endif %}
+
+            <li class="page-item active">
+                <span class="page-link">
+                    Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+                </span>
+            </li>
+
+            {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link"
+                   href="?q={{ query }}&fecha_inicio={{ fecha_inicio }}&fecha_fin={{ fecha_fin }}&page={{ page_obj.next_page_number }}">
+                   Siguiente
+                </a>
+            </li>
+            {% endif %}
+
+        </ul>
+    </nav>
+
+</div>
+
+{% endblock %}

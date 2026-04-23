@@ -1,0 +1,212 @@
+{% extends 'Base/base.html' %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <!-- ENCABEZADO -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">DETALLE DE VENTA {{ v.tipo }}</h4>
+            <h5 class="text-muted mb-0">
+                Factura # {{ v.factura }} | {{ v.fecha|date:"d-m-Y" }}
+            </h5>
+        </div>
+    </div>
+
+    <!-- DATOS DEL CLIENTE -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-dark text-white">
+            Datos del Cliente
+        </div>
+        <div class="card-body">
+            <form action="#" method="POST">{% csrf_token %}
+                <div class="row g-3">
+
+                    <div class="col-md-3">
+                        <label class="form-label">NIT</label>
+                        <input type="text" class="form-control" name="nit" value="{{ c.nit }}">
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label">Nombre</label>
+                        <input type="text" class="form-control" name="nombre" value="{{ c.nombre }}">
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label">Direccion</label>
+                        <input type="text" class="form-control" name="direccion" value="{{ c.direccion }}">
+                    </div>
+
+                    <div class="col-md-2">
+                        <label class="form-label">Descuento (%)</label>
+                        <input type="number" name="descuento" step="0.01" min="0" max="100"
+                               class="form-control" value="{{ v.descuento }}">
+                    </div>
+
+                    <div class="col-md-2">
+                        <label class="form-label">Total</label>
+                        <input type="text" class="form-control fw-bold text-success"
+                               value="Q.{{ v.total }}" readonly>
+                    </div>
+
+                     <div class="col-md-4 d-flex align-items-end gap-2">
+                        <button name="terminar" class="btn btn-success w-50 shadow-sm">
+                            ✔ Terminar
+                        </button>
+                        <button name="descartar" class="btn btn-danger w-50 shadow-sm">
+                            ✖ Descartar
+                        </button>
+                    </div>
+
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- CONTENIDO -->
+    <div class="row">
+
+        <!-- BUSCAR PRODUCTO -->
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    Buscar Producto
+                </div>
+                <div class="card-body">
+
+                    <form action="#" method="POST">{% csrf_token %}
+                        <input type="text" class="form-control"
+                               placeholder="Buscar por nombre o codigo"
+                               name="buscar" autofocus>
+                    </form>
+
+                    {% if q %}
+                    <div class="table-responsive mt-3" style="max-height: 400px; overflow-y: auto;">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-dark sticky-top">
+                                <tr>
+                                    <th>Codigo</th>
+                                    <th>Producto</th>
+                                    <th>Stock</th>
+                                    <th>Precio</th>
+                                    <th>Cantidad</th>
+                                    <th class="text-center">Accion</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for p in prod %}
+                                <tr>
+                                    <td>{{ p.codigo }}</td>
+                                    <td>{{ p.nombre }}</td>
+                                    <td>
+                                        {% if p.stock_actual > 0 %}
+                                            <span class="badge bg-success">{{ p.stock_actual }}</span>
+                                        {% else %}
+                                            <span class="badge bg-danger">0</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>Q.{{ p.venta }}</td>
+                                    <td>
+                                        <form action="#" method="POST" class="d-flex">{% csrf_token %}
+                                            <input type="hidden" name="prod" value="{{ p.id }}">
+                                            <input type="number" name="cantidad"
+                                                   min="1" max="{{ p.stock_actual }}"
+                                                   class="form-control form-control-sm"
+                                                   style="width:80px;" value="1" required>
+
+                                            {% if p.stock_actual > 0 %}
+                                                <button name="agregar" class="btn btn-success btn-sm ms-2">
+                                                    +
+                                                </button>
+                                            {% else %}
+                                                <button class="btn btn-secondary btn-sm ms-2" disabled>
+                                                    Sin stock
+                                                </button>
+                                            {% endif %}
+                                        </form>
+                                    </td>
+                                    <td class="text-center"></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+
+        <!-- PRODUCTOS AGREGADOS -->
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white">
+                    Productos Agregados
+                </div>
+                <div class="card-body">
+
+                    <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-dark sticky-top">
+                                <tr>
+                                    <th>Codigo</th>
+                                    <th>Producto</th>
+                                    <th>Precio</th>
+                                    <th>Cantidad</th>
+                                    <th>Total</th>
+                                    <th class="text-center">Accion</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for d in detalle %}
+                                <tr>
+                                    <td>{{ d.producto.codigo }}</td>
+                                    <td>{{ d.producto.nombre }}</td>
+                                    <td>Q.{{ d.precio_unitario }}</td>
+                                    <td>{{ d.cantidad }}</td>
+                                    <td class="fw-bold text-success">Q.{{ d.total }}</td>
+                                    <td class="text-center">
+                                        <form action="#" method="POST">{% csrf_token %}
+                                            <input type="hidden" name="cor_detalle" value="{{ d.id }}">
+                                            <button name="quitar" class="btn btn-danger btn-sm">
+                                                Quitar
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="6" class="text-center text-muted">
+                                        No hay productos agregados
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<!-- MENSAJES -->
+{% if messages %}
+    {% for message in messages %}
+    <script>
+    Swal.fire({
+      position: "top-end",
+      icon: '{{ message.tags }}',
+      title: '{{ message }}',
+      showConfirmButton: false,
+      timer: 1500
+    });
+    </script>
+    {% endfor %}
+{% endif %}
+
+{% endblock %}

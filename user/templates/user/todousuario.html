@@ -1,0 +1,90 @@
+{% extends 'Base/base.html' %}
+{% load static %}
+
+{% block content %}
+
+{% if messages %}
+{% for message in messages %}
+<script>
+  Swal.fire({
+    "title": "Informacion Sistema",
+    "text": "{{message}}",
+    "icon": "{{message.tags}}"
+  })
+</script>
+{% endfor %}
+{% endif %}
+
+<div class="container">
+  <br>
+  <h4 align="center">LISTADO DE USUARIOS REGISTRADOS</h4>
+  <br>
+  <div class="row">
+    <div class="col-mod-6" align="left">
+      <a href="#">Nuevo Usuario</a>
+    </div>
+    <div class="col-mod-6" align="right">
+      <a href="#">Descargar</a>
+    </div>
+  </div><br>
+
+  <div class="table-responsive">
+
+    <div class="row">
+
+    <div class="col-md-12">
+
+      <table class="table table-sm table-bordered table-hover">
+
+        <thead>
+          <tr>
+            <th>Usuario</th>
+            <th>Nombre Completo</th>
+            <th>Rol</th>
+            <th>Activo</th>
+            <th>Acceso Panel</th>
+            <th>SuperUsuario</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {% for u in usuario %}
+          <tr>
+            <td>{{u.username}}</td>
+            <td>{{u.first_name}} {{u.last_name}}</td>
+            <td>{{u.rol}}</td>
+            <td>{{u.is_active}}</td>
+            <td>{{u.is_staff}}</td>
+            <td>{{u.is_superuser}}</td>
+            <td>
+              <a href="{% url 'UpdateUser' u.username %}">
+              <i class="ti-pencil-alt text-info"></i>
+              </a>
+              {% if u.is_active == 1 %}
+              <a href="{% url 'BajaUser' u.id %}">
+              <i class="ti-arrow-down text-danger"></i>
+              </a>
+              {% else %}
+              <a href="{% url 'AltaUser' u.id %}">
+              <i class="ti-arrow-up text-primary"></i>
+              </a>
+              {% endif %}
+            </td>
+          </tr>
+          {% empty %}
+          <caption>SIN USUARIOS</caption>
+          {% endfor %}
+        </tbody>
+
+      </table>
+
+    </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+{% endblock %}

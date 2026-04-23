@@ -1,0 +1,85 @@
+{% extends 'Base/base.html' %}
+{% load static %}
+{% block content %}
+{% if messages %}
+{% for message in messages %}
+<script>
+    Swal.fire({
+        "title": "Informacion Sistema",
+        "text": "{{message}}",
+        "icon": "{{message.tags}}"
+    })
+</script>
+{% endfor %}
+{% endif %}
+
+
+<div class="container">
+    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4" style="padding-top: 20px;"><br><br>
+        <div class="container">
+            <form action="" method="POST" enctype="multipart/form-data">{% csrf_token %}
+                <br>
+                <h3 class="text-primary" align="center">REGISTRO DE NUEVO USUARIO</h3>
+
+                <div class="container">
+                    <div class="row row-cols-2">
+                        <div class="col">
+                            <label>{{form.username.label_tag}}</label>
+                            {{form.username}}
+                        </div>
+                        <div class="col">
+                            <label>{{form.password.label_tag}}</label>
+                            {{form.password}}
+                        </div>
+                        <div class="col">
+                            <label>{{form.first_name.label_tag}}</label>
+                            {{form.first_name}}
+                        </div>
+                        <div class="col">
+                            <label>{{form.dpi.label_tag}}</label>
+                            {{form.dpi}}
+                        </div>
+                        <div class="col">
+                            <label>{{form.last_name.label_tag}}</label>
+                            {{form.last_name}}
+                        </div>
+                        <div class="col">
+                            <label>{{form.email.label_tag}}</label>
+                            {{form.email}}
+                        </div>
+                        <div class="col">
+                            <label>{{form.direccion.label_tag}}</label>
+                            {{form.direccion}}
+                        </div>
+                        <div class="col">
+                            <label>{{form.direccion2.label_tag}}</label>
+                            {{form.direccion2}}
+                        </div>
+                        <div class="col">
+                            <label>{{form.tel.label_tag}}</label>
+                            {{form.tel}}
+                        </div>
+                        <div class="col">
+                            <label>{{form.ciudad.label_tag}}</label>
+                            {{form.ciudad}}
+                        </div>
+                        <div class="col">
+                            <label>{{form.departamento.label_tag}}</label>
+                            {{form.departamento}}
+                        </div>
+                        <div class="col">
+                            <button type="submit" class="btn btn-success">Registrarse</button>
+                            <button type="reset" class="btn btn-danger">Cancelar</button>
+                        </div>
+
+                    </div>
+                </div>
+
+
+                <br>
+            </form>
+        </div>
+    </main>
+</div>
+
+{% endblock %}

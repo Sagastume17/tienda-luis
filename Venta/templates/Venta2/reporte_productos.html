@@ -1,0 +1,23 @@
+{% extends 'Base/base.html' %}
+{% block content %}
+<h2>Productos Más Rentables</h2>
+<table class="table table-bordered table-hover">
+  <thead class="table-primary">
+    <tr>
+      <th>Producto</th>
+      <th>Ingresos Totales (Q)</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for p in productos %}
+    <tr>
+      <td>{{ p.producto__nombre }}</td>
+      <td>{{ p.total_ingresos }}</td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="2">No hay datos disponibles</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
+
