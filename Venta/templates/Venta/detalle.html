@@ -44,12 +44,24 @@
                                class="form-control" value="{{ v.descuento }}">
                     </div>
 
-                    <div class="col-md-2">
-                        <label class="form-label">Total</label>
-                        <input type="text" class="form-control fw-bold text-success"
-                               value="Q.{{ v.total }}" readonly>
-                    </div>
-
+                       <div class="col-md-3">
+                <label>Total</label>
+                <input type="text" class="form-control" name="total" style="font-size:40px;" value="{{ v.total }}" id="totalVenta" readonly>
+            </div>
+      <div class="col-md-3">
+                <label class="form-label">Dinero recibido</label>
+                        <input type="number" id="dineroRecibido" style="font-size:35px;" class="form-control" 
+                               placeholder="Ingrese cantidad">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Cambio a entregar</label>
+                        <input type="text" id="cambio" class="form-control" style="font-size:40px;" readonly>
+            </div>
+            <div class="col-md-2"><br>
+                <button type="button" class="btn btn-success w-100" onclick="calcularCambio()">
+                        Calcular Cambio
+                    </button>
+            </div>
                      <div class="col-md-4 d-flex align-items-end gap-2">
                         <button name="terminar" class="btn btn-success w-50 shadow-sm">
                             ✔ Terminar
@@ -194,7 +206,7 @@
 
 </div>
 
-<!-- MENSAJES -->
+<!-- Mensajes con SweetAlert -->
 {% if messages %}
     {% for message in messages %}
     <script>
@@ -208,5 +220,28 @@
     </script>
     {% endfor %}
 {% endif %}
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const cantidadInput = document.querySelector(".cantidadInput");
+    if (cantidadInput) {
+        cantidadInput.focus();
+        cantidadInput.select();
+    }
+});
+
+function calcularCambio() {
+        const total = parseFloat(document.getElementById("totalVenta").value) || 0;
+        const recibido = parseFloat(document.getElementById("dineroRecibido").value) || 0;
+        const cambio = recibido - total;
+
+        document.getElementById("cambio").value = cambio >= 0 
+            ? "Q. " + cambio.toFixed(2) 
+            : "Falta Q. " + Math.abs(cambio).toFixed(2);
+    }
+
+    // 📌 Ejecutar automáticamente al escribir en "dineroRecibido"
+    document.getElementById("dineroRecibido").addEventListener("input", calcularCambio);
+</script>
 
 {% endblock %}

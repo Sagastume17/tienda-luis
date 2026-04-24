@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-mcpj4-fe88=0!lyg8s93@s(ed1lo+l2hcr$#js7$@pawnd9m2@
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['https://laeconomica.online','http://laeconomica.online','laeconomica.online']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -86,10 +86,10 @@ WSGI_APPLICATION = 'tienda.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'cooporac_tienda',
-        'USER': 'cooporac_tienda_user',
-        'PASSWORD': 'LuisG2026',
-        'HOST': '',
+        'NAME': 'tienda',
+        'USER': 'root',
+        'PASSWORD': '',
+        'HOST': 'localhost',
         'POST': '3306',
         'OPTIONS': {
             'sql_mode': 'traditional',
