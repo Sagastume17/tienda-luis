@@ -50,25 +50,35 @@ def reporte_por_usuario(request):
     return render(request, "Venta/reporte_por_usuario.html", {"usuarios": usuarios})
 
 
+from django.contrib.auth.decorators import login_required
+from django.db.models import Sum
+from django.utils.timezone import now
+
 @login_required
 def estadisticas_ventas(request):
-    hoy = now()  # si tu campo fecha es DateField
-    # Ventas procesadas del día
-    ventas_dia = Venta.objects.filter(fecha=hoy, estado=1)
-    ventas_dia2 = Venta.objects.filter(fecha=hoy, estado=1)
+    # 📅 Obtener fechas del formulario
+    fecha_inicio = request.GET.get("fecha_inicio")
+    fecha_fin = request.GET.get("fecha_fin")
 
-    # ✅ Ganancia global
-    ganancias_global = ventas_dia.aggregate(total=Sum("total"))["total"] or 0
+    # 👉 Si no envían fechas, usar hoy
+    if not fecha_inicio or not fecha_fin:
+        hoy = now().date()
+        fecha_inicio = hoy
+        fecha_fin = hoy
 
-    # ✅ Ventas FEL
-    fel_qs = ventas_dia.filter(tipo="FEL")  # case-insensitive
-    fel_count = fel_qs.count()
+    # 🔎 Filtrar por rango
+    ventas = Venta.objects.filter(fecha__range=[fecha_inicio, fecha_fin])
+
+    # 🔢 Totales
+    ganancias_global = ventas.aggregate(total=Sum("total"))["total"] or 0
+
+    fel_qs = ventas.filter(tipo__iexact="fel")
     fel_total = fel_qs.aggregate(total=Sum("total"))["total"] or 0
+    fel_count = fel_qs.count()
 
-    # ✅ Ventas Proforma
-    proforma_qs = ventas_dia2.filter(tipo="Proforma")  # case-insensitive
-    proforma_count = proforma_qs.count()
+    proforma_qs = ventas.filter(tipo__iexact="proforma")
     proforma_total = proforma_qs.aggregate(total=Sum("total"))["total"] or 0
+    proforma_count = proforma_qs.count()
 
     context = {
         "ganancias_global": ganancias_global,
@@ -76,9 +86,17 @@ def estadisticas_ventas(request):
         "fel_total": fel_total,
         "proforma_count": proforma_count,
         "proforma_total": proforma_total,
-    }
-    return render(request, "Venta/estadisticas.html", context)
 
+        # 📊 gráfica
+        "chart_labels": ["FEL", "Proforma"],
+        "chart_data": [float(fel_total), float(proforma_total)],
+
+        # 📅 mantener valores en el form
+        "fecha_inicio": fecha_inicio,
+        "fecha_fin": fecha_fin,
+    }
+
+    return render(request, "Venta/estadisticas.html", context)
 
 @login_required
 def exportar_ventas_excel(request):

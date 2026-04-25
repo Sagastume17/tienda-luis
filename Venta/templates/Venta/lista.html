@@ -49,6 +49,7 @@
                     <th>Fecha</th>
                     <th class="text-end">Total</th>
                     <th>Usuario</th>
+                    <th>Tipo</th>
                     <th class="text-center">Acciones</th>
                 </tr>
             </thead>
@@ -61,6 +62,7 @@
                     <td>{{ venta.fecha|date:"d-m-Y" }}</td>
                     <td class="text-end">Q. {{ venta.total|floatformat:2 }}</td>
                     <td>{{ venta.usuario }}</td>
+                    <td>{{ venta.tipo }}</td>
                     <td class="text-center">
                         {% if venta.lugar == 'Bodega 1' %}
                             <a href="{% url 'DetalleVenta' venta.token %}" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" title="Ver detalle en Bodega 1">Ver Detalle</a>

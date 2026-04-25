@@ -58,15 +58,15 @@
                         <input type="text" id="cambio" class="form-control" style="font-size:40px;" readonly>
             </div>
             <div class="col-md-2"><br>
-                <button type="button" class="btn btn-success w-100" onclick="calcularCambio()">
+                <button type="button" class="btn btn-success w-100 fs-5" onclick="calcularCambio()">
                         Calcular Cambio
                     </button>
             </div>
                      <div class="col-md-4 d-flex align-items-end gap-2">
-                        <button name="terminar" class="btn btn-success w-50 shadow-sm">
+                        <button name="terminar" class="btn btn-success w-50 shadow-sm fs-4">
                             ✔ Terminar
                         </button>
-                        <button name="descartar" class="btn btn-danger w-50 shadow-sm">
+                        <button name="descartar" class="btn btn-danger w-50 shadow-sm fs-4">
                             ✖ Descartar
                         </button>
                     </div>
@@ -82,13 +82,13 @@
         <!-- BUSCAR PRODUCTO -->
         <div class="col-md-6">
             <div class="card shadow-sm">
-                <div class="card-header bg-primary text-white">
+                <div class="card-header bg-primary text-white fs-4">
                     Buscar Producto
                 </div>
                 <div class="card-body">
 
                     <form action="#" method="POST">{% csrf_token %}
-                        <input type="text" class="form-control"
+                        <input type="text" class="form-control fs-4"
                                placeholder="Buscar por nombre o codigo"
                                name="buscar" autofocus>
                     </form>
@@ -153,7 +153,7 @@
         <!-- PRODUCTOS AGREGADOS -->
         <div class="col-md-6">
             <div class="card shadow-sm">
-                <div class="card-header bg-success text-white">
+                <div class="card-header bg-success text-white fs-4">
                     Productos Agregados
                 </div>
                 <div class="card-body">
@@ -189,7 +189,7 @@
                                 </tr>
                                 {% empty %}
                                 <tr>
-                                    <td colspan="6" class="text-center text-muted">
+                                    <td colspan="6" class="text-center text-muted fs-5">
                                         No hay productos agregados
                                     </td>
                                 </tr>
