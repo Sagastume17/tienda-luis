@@ -105,7 +105,7 @@ from datetime import datetime
 def detalle(request, t):
     venta = get_object_or_404(Venta, token=t)
     form = DetalleVentaForm()
-    detalles = DetalleVenta.objects.filter(venta=venta)
+    detalles = DetalleVenta.objects.filter(venta=venta).order_by('id')
 
     cliente_existe = (
         Cliente.objects.filter(nit=str(venta.nit))

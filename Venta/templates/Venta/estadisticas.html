@@ -7,21 +7,29 @@
 
     <!-- 📅 FILTRO POR FECHAS -->
     <form method="GET" class="row mb-4">
+
         <div class="col-md-4">
-            <label>Desde:</label>
-            <input type="date" name="fecha_inicio" class="form-control" value="{{ fecha_inicio }}">
+            <label class="fw-bold fs-4">Desde:</label>
+            <input type="date" name="fecha_inicio"
+                   class="form-control form-control-lg shadow-sm"
+                   style="height: 55px; font-size: 18px;">
         </div>
 
         <div class="col-md-4">
-            <label>Hasta:</label>
-            <input type="date" name="fecha_fin" class="form-control" value="{{ fecha_fin }}">
+            <label class="fw-bold fs-4">Hasta:</label>
+            <input type="date" name="fecha_fin"
+                   class="form-control form-control-lg shadow-sm"
+                   style="height: 55px; font-size: 18px;">
         </div>
 
         <div class="col-md-4 d-flex align-items-end">
-            <button type="submit" class="btn btn-primary w-100">
+            <button type="submit"
+                    class="btn btn-primary w-100 fs-5 shadow-sm"
+                    style="height: 55px;">
                 🔍 Filtrar
             </button>
         </div>
+
     </form>
 
     <!-- 📊 TARJETAS -->
@@ -32,7 +40,7 @@
             <div class="card shadow-sm border-success">
                 <div class="card-body">
                     <h5 class="card-title">Ganancia Global</h5>
-                    <p class="card-text fs-4 text-success">
+                    <p class="card-text fs-3 text-success fw-bold">
                         Q. {{ ganancias_global|floatformat:2 }}
                     </p>
                 </div>
@@ -47,8 +55,8 @@
                     <p class="card-text fs-5 text-primary">
                         Cantidad: {{ fel_count }}
                     </p>
-                    <p class="card-text fs-5 text-success">
-                        Total: Q. {{ fel_total|floatformat:2 }}
+                    <p class="card-text fs-4 text-success fw-bold">
+                        Q. {{ fel_total|floatformat:2 }}
                     </p>
                 </div>
             </div>
@@ -62,8 +70,8 @@
                     <p class="card-text fs-5 text-warning">
                         Cantidad: {{ proforma_count }}
                     </p>
-                    <p class="card-text fs-5 text-success">
-                        Total: Q. {{ proforma_total|floatformat:2 }}
+                    <p class="card-text fs-4 text-success fw-bold">
+                        Q. {{ proforma_total|floatformat:2 }}
                     </p>
                 </div>
             </div>
@@ -76,7 +84,7 @@
         <div class="col-md-8 offset-md-2">
             <div class="card shadow-sm">
                 <div class="card-body">
-                    <h5 class="text-center">📈 Ventas por Tipo</h5>
+                    <h5 class="text-center mb-3">📈 Ventas por Tipo</h5>
                     <canvas id="ventasChart"></canvas>
                 </div>
             </div>
@@ -92,14 +100,14 @@
 <script>
     const ctx = document.getElementById('ventasChart').getContext('2d');
 
-    const ventasChart = new Chart(ctx, {
+    new Chart(ctx, {
         type: 'bar',
         data: {
             labels: {{ chart_labels|safe }},
             datasets: [{
                 label: 'Total de Ventas (Q)',
                 data: {{ chart_data|safe }},
-                borderWidth: 1
+                borderWidth: 2
             }]
         },
         options: {

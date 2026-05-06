@@ -2,7 +2,7 @@
 
 {% block content %}
 
-<div class="container mt-4">
+<div class="container mt-2">
 
     <!-- ENCABEZADO -->
     <div class="card shadow-sm mb-4">
@@ -12,10 +12,10 @@
                 Factura # {{ v.factura }} | {{ v.fecha|date:"d-m-Y" }}
             </h5>
         </div>
-    </div>
+    
 
     <!-- DATOS DEL CLIENTE -->
-    <div class="card shadow-sm mb-4">
+    <div class="card shadow-sm mb-2">
         <div class="card-header bg-dark text-white">
             Datos del Cliente
         </div>
@@ -171,7 +171,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for d in detalle %}
+                                {% for d in detalle reversed %}
                                 <tr>
                                     <td>{{ d.producto.codigo }}</td>
                                     <td>{{ d.producto.nombre }}</td>
@@ -229,7 +229,9 @@ document.addEventListener("DOMContentLoaded", function() {
         cantidadInput.select();
     }
 });
+</script>
 
+<script>
 function calcularCambio() {
         const total = parseFloat(document.getElementById("totalVenta").value) || 0;
         const recibido = parseFloat(document.getElementById("dineroRecibido").value) || 0;
