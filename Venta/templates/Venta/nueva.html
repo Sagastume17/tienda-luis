@@ -80,41 +80,81 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 </script>
 
-<!-- MENSAJES -->
 {% if messages %}
-    {% for message in messages %}
+{% for message in messages %}
+<script>
+Swal.fire({
+  title: 'Procesando venta...',
+  html: '<div class="rainbow-loader"></div>',
+  showConfirmButton: false,
+  allowOutsideClick: false,
+  didOpen: () => {
 
-        {% if message.tags == 'success' %}
-        <script>
+    setTimeout(() => {
+
+      {% if message.tags == 'error' %}
+
         Swal.fire({
-            icon: "{{message.tags}}",
-            title: "Venta Finalizada!",
-            html: "<a href='{{message}}' class='btn btn-danger' target='_blank'>FEL</a>",
-            footer: '<a href="#">Gracias por su compra</a>'
+          icon: 'error',
+          title: 'Error',
+          text: "{{ message }}"
         });
-        </script>
 
-        {% elif message.tags == 'warning' %}
-        <script>
+      {% elif message.tags == 'success' %}
+
         Swal.fire({
-            icon: "{{message.tags}}",
-            title: "Venta Descartada!",
-            footer: '<a href="#">Gracias por su compra</a>'
+          icon: 'success',
+          title: 'FEL Generado',
+          html: `
+            <a href="{{ message }}" target="_blank" class="btn btn-success">
+              Ver FEL
+            </a>
+          `
         });
-        </script>
 
-        {% else %}
-        <script>
+      {% else %}
+
         Swal.fire({
-            icon: "{{message.tags}}",
-            title: "Venta Finalizada!",
-            html: "<a href='{% url 'TicketVenta' message %}' class='btn btn-danger' target='_blank'>Ticket</a>",
-            footer: '<a href="#">Gracias por su compra</a>'
+          icon: 'info',
+          title: 'Venta Finalizada',
+          html: `
+            <a href="{% url 'TicketVenta' message %}"
+               target="_blank"
+               class="btn btn-danger">
+              Imprimir Ticket
+            </a>
+          `
         });
-        </script>
-        {% endif %}
 
-    {% endfor %}
+      {% endif %}
+
+    }, 3000);
+
+  }
+});
+</script>
+{% endfor %}
 {% endif %}
+
+<style>
+/* Loader multicolor tipo ruedita */
+.rainbow-loader {
+  border: 8px solid #f3f3f3;
+  border-top: 8px solid red;
+  border-right: 8px solid orange;
+  border-bottom: 8px solid green;
+  border-left: 8px solid blue;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  margin: auto;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+</style>
 
 {% endblock %}

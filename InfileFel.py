@@ -484,7 +484,7 @@ class fel_dte:
     def firmar_xml(self, xml_plano, anulacion):  
       #print(xml_plano)    
       UrlFirma = 'https://signer-emisores.feel.com.gt/sign_solicitud_firmas/firma_xml'
-      llave_firma ="8e922c19746498b657425776cdfaec15"
+      llave_firma ="821647d9f6ccabe90a082bf4f34fa6e1"
       alias_pfx="34390138_PRODU"
       es_anulacion = anulacion
     

@@ -89,7 +89,7 @@ DATABASES = {
         'NAME': 'tienda',
         'USER': 'root',
         'PASSWORD': '',
-        'HOST': 'localhost',
+        'HOST': '',
         'POST': '3306',
         'OPTIONS': {
             'sql_mode': 'traditional',

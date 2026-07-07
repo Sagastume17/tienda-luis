@@ -101,8 +101,11 @@ from django.db.models import Q, Sum
 from decimal import Decimal
 from datetime import datetime
 
+
+
 @login_required
 def detalle(request, t):
+
     venta = get_object_or_404(Venta, token=t)
     form = DetalleVentaForm()
     detalles = DetalleVenta.objects.filter(venta=venta).order_by('id')
@@ -116,9 +119,13 @@ def detalle(request, t):
 
     if request.method == 'POST':
 
-        # 🔍 BUSCAR
+        # =====================================
+        # 🔍 BUSCAR PRODUCTO (ESCÁNER / TEXTO)
+        # =====================================
         if 'buscar' in request.POST:
-            termino = request.POST['buscar']
+
+            termino = request.POST.get('buscar')
+
             if not termino:
                 messages.error(request, 'Campo vacío')
                 return redirect('DetalleVenta', t)
@@ -127,60 +134,89 @@ def detalle(request, t):
             busqueda = Producto.objects.filter(querys)
 
             return render(request, 'Venta/detalle.html', {
-                'v': venta, 'form': form, 'detalle': detalles,
-                'c': cliente_existe, 'q': True, 'prod': busqueda
+                'v': venta,
+                'form': form,
+                'detalle': detalles,
+                'c': cliente_existe,
+                'q': True,
+                'prod': busqueda
             })
 
-        # ➕ AGREGAR
+        # =====================================
+        # ➕ AGREGAR PRODUCTO
+        # =====================================
         elif 'agregar' in request.POST:
+
             try:
-                prod_id = int(request.POST.get('prod'))
-                p = Producto.objects.get(id=prod_id)
+                cantidad = int(request.POST.get('cantidad', 1))
             except:
-                messages.error(request, "Producto no encontrado")
-                return redirect('DetalleVenta', t)
+                cantidad = 1
 
-            form = DetalleVentaForm(request.POST)
-            if form.is_valid():
-                cantidad = int(form.cleaned_data['cantidad'])
+            codigo = request.POST.get('codigo')
 
-                if cantidad > p.stock_actual:
-                    messages.error(request, f'Solo hay {p.stock_actual} en stock')
+            # 🔥 BUSCAR POR CÓDIGO (ESCÁNER)
+            if codigo:
+                p = Producto.objects.filter(codigo=codigo).first()
+                if not p:
+                    messages.error(request, "Producto no encontrado por código")
                     return redirect('DetalleVenta', t)
 
-                with transaction.atomic():
-                    dt = DetalleVenta.objects.filter(producto=p, venta=venta).first()
+            # 🔥 BUSCAR POR ID (BOTÓN)
+            else:
+                try:
+                    prod_id = int(request.POST.get('prod'))
+                    p = Producto.objects.get(id=prod_id)
+                except:
+                    messages.error(request, "Producto no encontrado")
+                    return redirect('DetalleVenta', t)
 
-                    if dt:
-                        dt.cantidad += cantidad
-                        dt.fecha_actualizo = datetime.today()
-                        dt.save()
-                    else:
-                        dt = form.save(commit=False)
-                        dt.venta = venta
-                        dt.producto = p
-                        dt.precio_unitario = p.venta
-                        dt.cantidad = cantidad
-                        dt.fecha_actualizo = datetime.today()
-                        dt.save()
-
-                    # 🔥 RECALCULAR TOTAL
-                    total = DetalleVenta.objects.filter(venta=venta).aggregate(
-                        total=Sum('total')
-                    )['total'] or Decimal(0)
-
-                    venta.total = total
-                    venta.save()
-
-                    p.salida += cantidad
-                    p.save()
-
+            # VALIDAR STOCK
+            if cantidad > p.stock_actual:
+                messages.error(request, f'Solo hay {p.stock_actual} en stock')
                 return redirect('DetalleVenta', t)
 
-        # ❌ QUITAR
+            with transaction.atomic():
+
+                dt = DetalleVenta.objects.filter(producto=p, venta=venta).first()
+
+                if dt:
+                    dt.cantidad += cantidad
+                    dt.fecha_actualizo = datetime.today()
+                    dt.save()
+                else:
+                    dt = form.save(commit=False)
+                    dt.venta = venta
+                    dt.producto = p
+                    dt.precio_unitario = p.venta
+                    dt.cantidad = cantidad
+                    dt.fecha_actualizo = datetime.today()
+                    dt.save()
+
+                # 🔥 RECALCULAR TOTAL
+                total = DetalleVenta.objects.filter(venta=venta).aggregate(
+                    total=Sum('total')
+                )['total'] or Decimal(0)
+
+                venta.total = total
+                venta.save()
+
+                # 🔥 ACTUALIZAR INVENTARIO
+                p.salida += cantidad
+                p.save()
+
+            return redirect('DetalleVenta', t)
+
+        # =====================================
+        # ❌ QUITAR PRODUCTO
+        # =====================================
         elif 'quitar' in request.POST:
+
             try:
-                dt = DetalleVenta.objects.get(id=request.POST['cor_detalle'], venta=venta)
+                dt = DetalleVenta.objects.get(
+                    id=request.POST['cor_detalle'],
+                    venta=venta
+                )
+
                 pr = dt.producto
 
                 pr.salida = max(0, pr.salida - dt.cantidad)
@@ -200,9 +236,13 @@ def detalle(request, t):
 
             return redirect('DetalleVenta', t)
 
-        # 🗑 DESCARTAR
+        # =====================================
+        # 🗑 DESCARTAR VENTA
+        # =====================================
         elif 'descartar' in request.POST:
+
             with transaction.atomic():
+
                 for dt in DetalleVenta.objects.filter(venta=venta):
                     pr = dt.producto
                     pr.salida = max(0, pr.salida - dt.cantidad)
@@ -214,20 +254,25 @@ def detalle(request, t):
             messages.warning(request, "Venta descartada")
             return redirect('NuevaVenta')
 
-        # ✅ TERMINAR
+        # =====================================
+        # ✅ FINALIZAR VENTA
+        # =====================================
         elif 'terminar' in request.POST:
 
-            venta.nit = request.POST['nit']
-            venta.nombre = request.POST['nombre']
-            venta.direccion = request.POST['direccion']
+            venta.nit = request.POST.get('nit')
+            venta.nombre = request.POST.get('nombre')
+            venta.direccion = request.POST.get('direccion')
 
+            # =====================================
             # 🔥 PROFORMA CON DESCUENTO
+            # =====================================
             if venta.tipo == 'Proforma':
-                descuento = request.POST.get('descuento')
 
-                if descuento:
+                descuento = request.POST.get('descuento', 0)
+
+                try:
                     venta.descuento = Decimal(descuento)
-                else:
+                except:
                     venta.descuento = Decimal(0)
 
                 total = DetalleVenta.objects.filter(venta=venta).aggregate(
@@ -244,16 +289,24 @@ def detalle(request, t):
                 messages.info(request, venta.factura)
                 return redirect('NuevaVenta')
 
+            # =====================================
             # 🔥 FEL
+            # =====================================
             elif venta.tipo == 'FEL':
+
                 venta.save()
                 certificar_fel(request, venta.factura)
+
                 return redirect('NuevaVenta')
 
+            # =====================================
             # 🔥 NORMAL
+            # =====================================
             else:
+
                 venta.save()
                 messages.success(request, "Venta finalizada")
+
                 return redirect('NuevaVenta')
 
     return render(request, 'Venta/detalle.html', {
@@ -264,6 +317,7 @@ def detalle(request, t):
     })
 
 
+from decimal import Decimal
 def certificar_fel(request,venta):
     # Obtener la venta
     datoscliente = Venta.objects.filter(factura=venta).first()
@@ -342,10 +396,50 @@ def certificar_fel(request,venta):
         dte_fel_a_certificar.agregar_item(item_1)
 
     # Totales generales
-    total_fel.set_gran_total(miventa)
+    #total_fel.set_gran_total(miventa)
+    #totales_impuestos.set_nombre_corto('IVA')
+    #totales_impuestos.set_total_monto_impuesto(acuiva)
+    #total_fel.set_total_impuestos(totales_impuestos)
+    #dte_fel_a_certificar.agregar_totales(total_fel)
+    
+    # =========================================
+# DESCUENTO GENERAL
+# =========================================
+
+    descuento = datoscliente.descuento if datoscliente.descuento else Decimal(0)
+
+    subtotal = miventa
+
+    if descuento > 0:
+
+        porcentaje = descuento / Decimal(100)
+
+        descuento_monto = subtotal * porcentaje
+
+        total_final = subtotal - descuento_monto
+
+    # 🔥 RECALCULAR IVA
+        gravable = round((total_final / 112) * 100, 2)
+        iva_final = round((gravable * 12) / 100, 2)
+
+    else:
+
+        descuento_monto = Decimal(0)
+        total_final = subtotal
+        iva_final = acuiva
+
+# =========================================
+# TOTALES FEL
+# =========================================
+
+    total_fel.set_gran_total(round(total_final, 2))
+
     totales_impuestos.set_nombre_corto('IVA')
-    totales_impuestos.set_total_monto_impuesto(acuiva)
+
+    totales_impuestos.set_total_monto_impuesto(round(iva_final, 2))
+
     total_fel.set_total_impuestos(totales_impuestos)
+
     dte_fel_a_certificar.agregar_totales(total_fel)
 
     # Adenda opcional

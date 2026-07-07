@@ -168,10 +168,9 @@ def exportar_excel(productos):
 
 
 from django.db.models import Q, Sum, F, DecimalField, ExpressionWrapper
+from django.db.models.functions import Coalesce
 from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
-import openpyxl
 
 @login_required
 def listado2(request):
@@ -182,7 +181,7 @@ def listado2(request):
 
     productos = Producto2.objects.all().order_by("codigo")
 
-    # 🔎 BUSQUEDA
+    # 🔎 BÚSQUEDA
     if query:
         productos = productos.filter(
             Q(codigo__icontains=query) |
@@ -190,7 +189,7 @@ def listado2(request):
             Q(categoria__icontains=query)
         )
 
-    # 📅 FILTRO POR FECHA (solo si existe el campo)
+    # 📅 FILTRO POR FECHA
     if fecha_inicio:
         try:
             productos = productos.filter(fecha__gte=fecha_inicio)
@@ -210,10 +209,14 @@ def listado2(request):
             output_field=DecimalField(max_digits=15, decimal_places=2)
         ),
         valor_stock=ExpressionWrapper(
-            (Coalesce(F('ingreso'), 0) - Coalesce(F('salida'), 0)) * Coalesce(F('compra'), 0),
+            (Coalesce(F('ingreso'), 0) - Coalesce(F('salida'), 0)) *
+            Coalesce(F('compra'), 0),
             output_field=DecimalField(max_digits=15, decimal_places=2)
         )
     )
+
+    # ✅ SOLO PRODUCTOS CON EXISTENCIA
+    productos = productos.filter(stock_calc__gt=0)
 
     # 📥 EXPORTAR EXCEL
     if exportar:
@@ -223,7 +226,8 @@ def listado2(request):
     stock_invertido = productos.aggregate(
         total=Sum(
             ExpressionWrapper(
-                (Coalesce(F('ingreso'), 0) - Coalesce(F('salida'), 0)) * Coalesce(F('compra'), 0),
+                (Coalesce(F('ingreso'), 0) - Coalesce(F('salida'), 0)) *
+                Coalesce(F('compra'), 0),
                 output_field=DecimalField(max_digits=15, decimal_places=2)
             )
         )
@@ -244,7 +248,8 @@ def listado2(request):
     valor_venta_stock = productos.aggregate(
         total=Sum(
             ExpressionWrapper(
-                (Coalesce(F('ingreso'), 0) - Coalesce(F('salida'), 0)) * Coalesce(F('venta'), 0),
+                (Coalesce(F('ingreso'), 0) - Coalesce(F('salida'), 0)) *
+                Coalesce(F('venta'), 0),
                 output_field=DecimalField(max_digits=15, decimal_places=2)
             )
         )
@@ -264,6 +269,7 @@ def listado2(request):
         "ganancia": ganancia,
         "valor_venta_stock": valor_venta_stock,
     })
+    
 
 def exportar_excel_bodega2(productos):
     import openpyxl
@@ -305,7 +311,11 @@ def exportar_excel_bodega2(productos):
 
 @login_required
 def update(request, t):
+    # print("ID:", t)
+
     producto = get_object_or_404(Producto, id=t)
+
+    # print("Producto encontrado:", producto.nombre)
 
     if request.method == 'POST':
         form = UpdateProductoForm(request.POST, instance=producto)
@@ -344,6 +354,74 @@ def update(request, t):
         'producto': producto
     })
 
+
+@login_required
+def agotados2(request):
+
+    productos = Producto2.objects.annotate(
+        stock_calc=ExpressionWrapper(
+            Coalesce(F('ingreso'), 0) - Coalesce(F('salida'), 0),
+            output_field=DecimalField(max_digits=15, decimal_places=2)
+        ),
+        valor_stock=ExpressionWrapper(
+            (Coalesce(F('ingreso'), 0) - Coalesce(F('salida'), 0)) * Coalesce(F('compra'), 0),
+            output_field=DecimalField(max_digits=15, decimal_places=2)
+        )
+    ).filter(stock_calc__lte=0).order_by('codigo')
+
+    paginator = Paginator(productos, 25)
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, 'Producto/agotados2.html', {
+        'page_obj': page_obj
+    })
+    
+
+@login_required
+def update2(request, t):
+   # print("ID:", t)
+
+    producto = get_object_or_404(Producto2, id=t)
+
+    #print("Producto encontrado:", producto.nombre)
+
+    if request.method == 'POST':
+        form = UpdateProductoForm(request.POST, instance=producto)
+        if form.is_valid():
+            p = form.save(commit=False)
+
+            # Campos adicionales
+            nuevo_ing = form.cleaned_data.get('nuevo_ing')
+            nuevo_compra = form.cleaned_data.get('nuevo_compra')
+            nuevo_venta = form.cleaned_data.get('nuevo_venta')
+
+            if nuevo_ing is not None:
+                if nuevo_ing >= 0:
+                    # Si es positivo, aumenta ingreso
+                    p.ingreso += nuevo_ing
+                else:
+                    # Si es negativo, aumenta salida
+                    p.salida += abs(nuevo_ing)
+
+            if nuevo_compra is not None:
+                p.compra = nuevo_compra
+
+            if nuevo_venta is not None:
+                p.venta = nuevo_venta
+
+            p.save()
+            messages.success(request, "Producto actualizado correctamente.")
+            return redirect('ListaProd2')
+        else:
+            messages.error(request, "Producto NO actualizado")
+    else:
+        form = UpdateProductoForm(instance=producto)
+
+    return render(request, 'Producto/update.html', {
+        'form': form,
+        'producto': producto
+    })
 
 
 

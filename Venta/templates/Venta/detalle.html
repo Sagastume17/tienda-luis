@@ -12,61 +12,78 @@
                 Factura # {{ v.factura }} | {{ v.fecha|date:"d-m-Y" }}
             </h5>
         </div>
-    
+    </div>
 
-    <!-- DATOS DEL CLIENTE -->
+    <!-- CLIENTE -->
     <div class="card shadow-sm mb-2">
         <div class="card-header bg-dark text-white">
             Datos del Cliente
         </div>
+
         <div class="card-body">
-            <form action="#" method="POST">{% csrf_token %}
+            <form method="POST">
+                {% csrf_token %}
+
                 <div class="row g-3">
 
                     <div class="col-md-3">
-                        <label class="form-label">NIT</label>
+                        <label>NIT</label>
                         <input type="text" class="form-control" name="nit" value="{{ c.nit }}">
                     </div>
 
                     <div class="col-md-3">
-                        <label class="form-label">Nombre</label>
+                        <label>Nombre</label>
                         <input type="text" class="form-control" name="nombre" value="{{ c.nombre }}">
                     </div>
 
                     <div class="col-md-3">
-                        <label class="form-label">Direccion</label>
+                        <label>Dirección</label>
                         <input type="text" class="form-control" name="direccion" value="{{ c.direccion }}">
                     </div>
 
                     <div class="col-md-2">
-                        <label class="form-label">Descuento (%)</label>
-                        <input type="number" name="descuento" step="0.01" min="0" max="100"
-                               class="form-control" value="{{ v.descuento }}">
+                        <label>Descuento (%)</label>
+                        <input type="number" name="descuento" min="0" max="100"
+                               step="0.01" class="form-control"
+                               value="{{ v.descuento }}">
                     </div>
 
-                       <div class="col-md-3">
-                <label>Total</label>
-                <input type="text" class="form-control" name="total" style="font-size:40px;" value="{{ v.total }}" id="totalVenta" readonly>
-            </div>
-      <div class="col-md-3">
-                <label class="form-label">Dinero recibido</label>
-                        <input type="number" id="dineroRecibido" style="font-size:35px;" class="form-control" 
-                               placeholder="Ingrese cantidad">
-            </div>
-            <div class="col-md-3">
-                <label class="form-label">Cambio a entregar</label>
-                        <input type="text" id="cambio" class="form-control" style="font-size:40px;" readonly>
-            </div>
-            <div class="col-md-2"><br>
-                <button type="button" class="btn btn-success w-100 fs-5" onclick="calcularCambio()">
-                        Calcular Cambio
-                    </button>
-            </div>
-                     <div class="col-md-4 d-flex align-items-end gap-2">
-                        <button name="terminar" class="btn btn-success w-50 shadow-sm fs-4">
+                    <div class="col-md-3">
+                        <label>Total</label>
+                        <input type="text" class="form-control"
+                               id="totalVenta"
+                               value="{{ v.total }}"
+                               readonly style="font-size:40px;">
+                    </div>
+
+                    <div class="col-md-3">
+                        <label>Dinero recibido</label>
+                        <input type="number" class="form-control"
+                               id="dineroRecibido"
+                               style="font-size:35px;">
+                    </div>
+
+                    <div class="col-md-3">
+                        <label>Cambio</label>
+                        <input type="text" class="form-control"
+                               id="cambio"
+                               readonly style="font-size:40px;">
+                    </div>
+
+                    <div class="col-md-2">
+                        <br>
+                        <button type="button"
+                                class="btn btn-success w-100"
+                                onclick="calcularCambio()">
+                            Calcular
+                        </button>
+                    </div>
+
+                    <div class="col-md-4 d-flex align-items-end gap-2">
+                        <button name="terminar" class="btn btn-success w-50 fs-4">
                             ✔ Terminar
                         </button>
-                        <button name="descartar" class="btn btn-danger w-50 shadow-sm fs-4">
+                        <button name="descartar" class="btn btn-danger w-50 fs-4">
                             ✖ Descartar
                         </button>
                     </div>
@@ -76,41 +93,50 @@
         </div>
     </div>
 
-    <!-- CONTENIDO -->
     <div class="row">
 
-        <!-- BUSCAR PRODUCTO -->
+        <!-- BUSCAR -->
         <div class="col-md-6">
+
             <div class="card shadow-sm">
+
                 <div class="card-header bg-primary text-white fs-4">
                     Buscar Producto
                 </div>
+
                 <div class="card-body">
 
-                    <form action="#" method="POST">{% csrf_token %}
-                        <input type="text" class="form-control fs-4"
-                               placeholder="Buscar por nombre o codigo"
-                               name="buscar" autofocus>
+                    <form method="POST" id="formBuscar">
+                        {% csrf_token %}
+                        <input type="text"
+                               name="buscar"
+                               id="buscarInput"
+                               class="form-control fs-4"
+                               placeholder="Buscar por nombre o código (Enter para buscar)"
+                               autofocus>
                     </form>
 
                     {% if q %}
-                    <div class="table-responsive mt-3" style="max-height: 400px; overflow-y: auto;">
+                    <div class="table-responsive mt-3" style="max-height: 400px; overflow-y:auto;">
                         <table class="table table-hover align-middle">
+
                             <thead class="table-dark sticky-top">
                                 <tr>
-                                    <th>Codigo</th>
+                                    <th>Código</th>
                                     <th>Producto</th>
                                     <th>Stock</th>
                                     <th>Precio</th>
                                     <th>Cantidad</th>
-                                    <th class="text-center">Accion</th>
+                                    <th>Acción</th>
                                 </tr>
                             </thead>
+
                             <tbody>
                                 {% for p in prod %}
                                 <tr>
                                     <td>{{ p.codigo }}</td>
                                     <td>{{ p.nombre }}</td>
+
                                     <td>
                                         {% if p.stock_actual > 0 %}
                                             <span class="badge bg-success">{{ p.stock_actual }}</span>
@@ -118,58 +144,71 @@
                                             <span class="badge bg-danger">0</span>
                                         {% endif %}
                                     </td>
-                                    <td>Q.{{ p.venta }}</td>
-                                    <td>
-                                        <form action="#" method="POST" class="d-flex">{% csrf_token %}
-                                            <input type="hidden" name="prod" value="{{ p.id }}">
-                                            <input type="number" name="cantidad"
-                                                   min="1" max="{{ p.stock_actual }}"
-                                                   class="form-control form-control-sm"
-                                                   style="width:80px;" value="1" required>
 
-                                            {% if p.stock_actual > 0 %}
-                                                <button name="agregar" class="btn btn-success btn-sm ms-2">
-                                                    +
-                                                </button>
-                                            {% else %}
-                                                <button class="btn btn-secondary btn-sm ms-2" disabled>
-                                                    Sin stock
-                                                </button>
-                                            {% endif %}
+                                    <td>Q.{{ p.venta }}</td>
+
+                                    <td>
+                                        <form method="POST" class="d-flex" onsubmit="return true;">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="prod" value="{{ p.id }}">
+                                            <input type="hidden" name="agregar" value="1">
+                                            
+                                            <input type="number"
+                                                   name="cantidad"
+                                                   value="1"
+                                                   min="1"
+                                                   max="{{ p.stock_actual }}"
+                                                   class="form-control cantidadInput"
+                                                   style="width:80px;"
+                                                   step="1">
+
+                                            <button type="submit"
+                                                    class="btn btn-success btn-sm ms-2"
+                                                    style="height: 38px;">
+                                                +
+                                            </button>
                                         </form>
                                     </td>
+
                                     <td class="text-center"></td>
                                 </tr>
                                 {% endfor %}
                             </tbody>
+
                         </table>
                     </div>
                     {% endif %}
 
                 </div>
             </div>
+
         </div>
 
-        <!-- PRODUCTOS AGREGADOS -->
+        <!-- AGREGADOS -->
         <div class="col-md-6">
+
             <div class="card shadow-sm">
+
                 <div class="card-header bg-success text-white fs-4">
                     Productos Agregados
                 </div>
+
                 <div class="card-body">
 
-                    <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+                    <div class="table-responsive" style="max-height:400px; overflow-y:auto;">
                         <table class="table table-hover align-middle">
+
                             <thead class="table-dark sticky-top">
                                 <tr>
-                                    <th>Codigo</th>
+                                    <th>Código</th>
                                     <th>Producto</th>
                                     <th>Precio</th>
                                     <th>Cantidad</th>
                                     <th>Total</th>
-                                    <th class="text-center">Accion</th>
+                                    <th>Acción</th>
                                 </tr>
                             </thead>
+
                             <tbody>
                                 {% for d in detalle reversed %}
                                 <tr>
@@ -178,15 +217,20 @@
                                     <td>Q.{{ d.precio_unitario }}</td>
                                     <td>{{ d.cantidad }}</td>
                                     <td class="fw-bold text-success">Q.{{ d.total }}</td>
-                                    <td class="text-center">
-                                        <form action="#" method="POST">{% csrf_token %}
+
+                                    <td>
+                                        <form method="POST">
+                                            {% csrf_token %}
                                             <input type="hidden" name="cor_detalle" value="{{ d.id }}">
-                                            <button name="quitar" class="btn btn-danger btn-sm">
+                                            <button type="submit" name="quitar"
+                                                    class="btn btn-danger btn-sm">
                                                 Quitar
                                             </button>
                                         </form>
                                     </td>
+
                                 </tr>
+
                                 {% empty %}
                                 <tr>
                                     <td colspan="6" class="text-center text-muted fs-5">
@@ -195,55 +239,130 @@
                                 </tr>
                                 {% endfor %}
                             </tbody>
+
                         </table>
                     </div>
 
                 </div>
             </div>
+
         </div>
 
     </div>
-
 </div>
 
-<!-- Mensajes con SweetAlert -->
+<!-- SWEET ALERT -->
 {% if messages %}
-    {% for message in messages %}
-    <script>
-    Swal.fire({
-      position: "top-end",
-      icon: '{{ message.tags }}',
-      title: '{{ message }}',
-      showConfirmButton: false,
-      timer: 1500
-    });
-    </script>
-    {% endfor %}
+{% for message in messages %}
+<script>
+Swal.fire({
+    position: "top-end",
+    icon: "{{ message.tags }}",
+    title: "{{ message }}",
+    showConfirmButton: false,
+    timer: 1500
+});
+</script>
+{% endfor %}
 {% endif %}
 
 <script>
-document.addEventListener("DOMContentLoaded", function() {
-    const cantidadInput = document.querySelector(".cantidadInput");
-    if (cantidadInput) {
-        cantidadInput.focus();
-        cantidadInput.select();
-    }
-});
-</script>
-
-<script>
+// Función para calcular el cambio
 function calcularCambio() {
-        const total = parseFloat(document.getElementById("totalVenta").value) || 0;
-        const recibido = parseFloat(document.getElementById("dineroRecibido").value) || 0;
-        const cambio = recibido - total;
+    const total = parseFloat(document.getElementById("totalVenta").value) || 0;
+    const recibido = parseFloat(document.getElementById("dineroRecibido").value) || 0;
+    const cambio = recibido - total;
 
-        document.getElementById("cambio").value = cambio >= 0 
-            ? "Q. " + cambio.toFixed(2) 
-            : "Falta Q. " + Math.abs(cambio).toFixed(2);
+    document.getElementById("cambio").value = cambio >= 0 
+        ? "Q. " + cambio.toFixed(2) 
+        : "Falta Q. " + Math.abs(cambio).toFixed(2);
+}
+
+document.getElementById("dineroRecibido").addEventListener("input", calcularCambio);
+
+// ============================================================
+// FUNCIONALIDAD DE ENTER - VERSIÓN SIMPLIFICADA
+// ============================================================
+document.addEventListener("DOMContentLoaded", function() {
+    
+    console.log("Script cargado - Buscando inputs de cantidad...");
+    
+    // Función para configurar los inputs de cantidad
+    function configurarInputsCantidad() {
+        const inputs = document.querySelectorAll(".cantidadInput");
+        console.log("Inputs encontrados:", inputs.length);
+        
+        inputs.forEach(function(input) {
+            // Quitar event listener viejo si existe
+            input.removeEventListener("keypress", manejadorEnter);
+            // Agregar nuevo
+            input.addEventListener("keypress", manejadorEnter);
+        });
     }
-
-    // 📌 Ejecutar automáticamente al escribir en "dineroRecibido"
-    document.getElementById("dineroRecibido").addEventListener("input", calcularCambio);
+    
+    // Manejador para el evento Enter
+    function manejadorEnter(event) {
+        if (event.key === "Enter") {
+            console.log("⚠️ ENTER presionado en input de cantidad");
+            event.preventDefault();
+            event.stopPropagation();
+            
+            // Encontrar el formulario padre
+            const form = this.closest("form");
+            if (form) {
+                console.log("Formulario encontrado, enviando...");
+                // Efecto visual
+                const btn = form.querySelector("button");
+                if (btn) {
+                    btn.style.backgroundColor = "#28a745";
+                    setTimeout(() => {
+                        btn.style.backgroundColor = "";
+                    }, 200);
+                }
+                // Enviar el formulario
+                form.submit();
+            } else {
+                console.error("No se encontró el formulario");
+            }
+        }
+    }
+    
+    // Configurar inicialmente
+    configurarInputsCantidad();
+    
+    // Si hay resultados, enfocar el primer input
+    setTimeout(function() {
+        const primerInput = document.querySelector(".cantidadInput");
+        if (primerInput) {
+            console.log("Enfocando primer input de cantidad");
+            primerInput.focus();
+            primerInput.select();
+        }
+    }, 500);
+    
+    // Observar cambios en la tabla (para cuando se recargan los resultados)
+    const observador = new MutationObserver(function(mutaciones) {
+        mutaciones.forEach(function(mutacion) {
+            if (mutacion.addedNodes.length > 0) {
+                console.log("Cambios detectados, reconfigurando inputs...");
+                configurarInputsCantidad();
+                
+                const primerInput = document.querySelector(".cantidadInput");
+                if (primerInput && document.activeElement !== primerInput) {
+                    primerInput.focus();
+                    primerInput.select();
+                }
+            }
+        });
+    });
+    
+    // Observar el contenedor de resultados
+    const contenedor = document.querySelector(".table-responsive");
+    if (contenedor) {
+        observador.observe(contenedor, { childList: true, subtree: true });
+    }
+    
+});
 </script>
 
 {% endblock %}

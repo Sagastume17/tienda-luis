@@ -45,7 +45,9 @@
     <!-- 🔝 ENCABEZADO -->
     <div class="d-flex justify-content-between align-items-center flex-wrap mb-3">
         <h3>📋 Lista de Productos</h3>
-
+<a href="{% url 'Agotados2' %}" class="btn btn-danger shadow-sm">
+    📦 Productos Agotados
+</a>
         <a href="{% url 'ListaProd' %}" class="btn btn-warning shadow-sm">
             🔄 Bodega 1
         </a>
@@ -156,7 +158,7 @@
 
                     <!-- ⚙️ ACCIONES -->
                     <td>
-                        <a href="{% url 'UpdateProd' producto.id %}" 
+                        <a href="{% url 'UpdateProd2' producto.id %}" 
                            class="btn btn-sm btn-warning">
                             ✏
                         </a>

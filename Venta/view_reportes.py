@@ -50,25 +50,26 @@ def reporte_por_usuario(request):
     return render(request, "Venta/reporte_por_usuario.html", {"usuarios": usuarios})
 
 
-from datetime import datetime
+from django.contrib.auth.decorators import login_required
+from django.db.models import Sum
 from django.utils.timezone import now
 
 @login_required
 def estadisticas_ventas(request):
+    # 📅 Obtener fechas del formulario
     fecha_inicio = request.GET.get("fecha_inicio")
     fecha_fin = request.GET.get("fecha_fin")
 
-    # 🔥 Si no envían fechas → usar HOY
+    # 👉 Si no envían fechas, usar hoy
     if not fecha_inicio or not fecha_fin:
         hoy = now().date()
         fecha_inicio = hoy
         fecha_fin = hoy
-    else:
-        fecha_inicio = datetime.strptime(fecha_inicio, "%Y-%m-%d").date()
-        fecha_fin = datetime.strptime(fecha_fin, "%Y-%m-%d").date()
 
+    # 🔎 Filtrar por rango
     ventas = Venta.objects.filter(fecha__range=[fecha_inicio, fecha_fin])
 
+    # 🔢 Totales
     ganancias_global = ventas.aggregate(total=Sum("total"))["total"] or 0
 
     fel_qs = ventas.filter(tipo__iexact="fel")
@@ -85,11 +86,18 @@ def estadisticas_ventas(request):
         "fel_total": fel_total,
         "proforma_count": proforma_count,
         "proforma_total": proforma_total,
+
+        # 📊 gráfica
         "chart_labels": ["FEL", "Proforma"],
         "chart_data": [float(fel_total), float(proforma_total)],
+
+        # 📅 mantener valores en el form
+        "fecha_inicio": fecha_inicio,
+        "fecha_fin": fecha_fin,
     }
 
     return render(request, "Venta/estadisticas.html", context)
+
 
 @login_required
 def exportar_ventas_excel(request):
